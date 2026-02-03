@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Новая вкладка</title>
+  <!-- icon for URL -->
+  <link rel="shortcut icon" type="x-icon" href="img/chrome.png">
+
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      background-color: #ffffff;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::-webkit-scrollbar {
+      display: none;
+    }
+
+    .google-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      box-sizing: border-box;
+    }
+
+    .menu-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .google-img {
+      width: 272px;
+      height: 90px;
+      margin-top: 150px;
+      margin-bottom: 50px;
+    }
+
+    .apps {
+      display: flex;
+      gap: 10px;
+    }
+
+    .apps img {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #666;
+    }
+
+    .profile img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .logo {
+      width: 272px;
+      margin: 50px 0 20px;
+    }
+
+    .search-box {
+      width: 600px;
+      max-width: 90%;
+      display: flex;
+      align-items: center;
+      background: white;
+      border-radius: 24px;
+      padding: 10px 15px;
+      box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      padding: 8px;
+    }
+
+    .search-box .icon {
+      margin-right: 10px;
+      font-size: 20px;
+      color: gray;
+    }
+
+    .search-box .mic {
+      font-size: 20px;
+      color: gray;
+      cursor: pointer;
+    }
+
+    .results {
+      width: 600px;
+      height: 40%;
+      max-width: 90%;
+      margin-top: 10px;
+      border-radius: 8px;
+      box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+      padding: 10px;
+      /* opacity: 0.2; */
+      display: none;
+      overflow-x: hidden;
+    }
+
+    .results::-webkit-scrollbar {
+      display: none;
+    }
+
+    .results ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .results li {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .results li:last-child {
+      border-bottom: none;
+    }
+
+    .results li span {
+      font-weight: bold;
+    }
+
+    /* #search-input {
+      opacity: 0.2;
+    } */
+
+    .x-icon {
+    cursor: pointer;
+    margin-left: 8px;
+    font-size: 18px;
+    color: #555;
+  }
+
+  .x-icon:hover {
+    color: red;
+  }
+
+
+    @media (max-width: 500px) {
+      .results {
+        height: 100vh;
+      }
+
+      .google-img,
+      .google-header {
+        display: none;
+      }
+
+      .search-box {
+        margin-top: 8px;
+      }
+
+      .microphone {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="google-header">
+    <div class="app"></div>
+    <div class="profile">
+      <span>Gmail</span>
+      <span>Images</span>
+      <img class="menu-icon" src="./img/menu.png" alt="Profile">
+      <img src="https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_120dp.png" alt="Profile">
+    </div>
+  </div>
+  <img class="google-img" src="./img/google-logo.png" class="logo" alt="Google" width="272" height="90">
+
+  <div class="search-box">
+    <img src="./svg/search_icon.svg" alt="Search Icon" width="20" height="20">
+    <input id="search-input" type="text" placeholder="Search Google or type a URL" autocomplete="off">
+    <img class="microphone" src="./img/mic.webp" alt="Mic Icon" width="30" height="30">
+    <i class="x-icon fa-brands fa-x-twitter"></i>
+  </div>
+
+  <div class="results" id="results">
+    <ul id="results-list"></ul>
+  </div>
+
+<script>
+  const searchInput = document.getElementById('search-input')
+  const resultsDiv = document.getElementById('results')
+  const resultsList = document.getElementById('results-list')
+  const clearIcon = document.querySelector('.x-icon')
+
+  // QUESTIONS 
+  const questionsAndAnswers = [
+    {
+      question: "Bultli texnologiya degende ne túsiniledi?",
+      answer: "Lokal kompyuterlerde isleytuǵın sistema"
+    },
+    {
+      question: "Bultli texnologiyalar rawajlanıwına tiykar bolgan texnologiya qaysi ?",
+      answer: "Virtualizaciya"
+    },
+    {
+      question: "Bultli esaplaw ataması birinshi ret qaysi jıllarda keń qollanıla baslaǵan",
+      answer: "2000-jillar basında"
+    },
+    {
+      question: "Bultli xizmetler ekonomikasında 'TCO' neni ańlatadi?",
+      answer: "iyelik etiwdiń uliwma bahası"
+    },
+    {
+      question: "Bultli texnologiyalardıń tiykarǵı maqseti ne?",
+      answer: "Resurslardan nátiyjeli paydalanıw"
+    },
+    {
+      question: "Bultli texnologiyalar qaysı tarawda eń kóp qollanıladı?",
+      answer: "IT hám biznes tarawlarında"
+    },
+    {
+      question: "Tómendegilerden qaysi biri Bultli texnologiya túsinigine sáykes keledi?",
+      answer: "Aralıq serverlerde maǵlıwmat saqlaw"
+    },
+    {
+      question: "Bultli texnologiyalar paydalanıwshıǵa qanday imkaniyat beredi?",
+      answer: "Qálegen jerden resurslarga kiriw"
+    },
+    {
+      question: "Bultli esaplawdıń tiykarǵı modeli qaysı? ",
+      answer: "Client–Server"
+    },
+    {
+      question: "Bultli texnologiyalar klassifikaciyası nege tiykarlanadı?",
+      answer: "Xizmet túrine"
+    },
+    {
+      question: "Resurslardı birlestiriw (resource pooling) neni ańlatadı?",
+      answer: "Resurslardı uliwma paydalanıw"
+    },
+    {
+      question: "Talap boyinsha ózine-ózi xizmet kórsetiw neni bildiredi?",
+      answer: "Paydalanıwshı óz betinshe resurs tańlawı"
+    },
+    {
+      question: "Úlken tarmaqqa kirıw (broad network access) degende ne túsiniledi?",
+      answer: "Túrli qurılmalar arqalı internetten kirıw"
+    },
+    {
+      question: "Avtomatikalıq sistema qásiyeti neni támiyinleydi?",
+      answer: "Resurslardıń avtomatikalıq keńeyiwı yaki qısqarıwı"
+    },
+    {
+      question: "Bultli yesaplawdıń ekonomikalıq sheshim bolıwı sebebi ne?",
+      answer: "Tek paydalanılgan resurs ushin tólem"
+    },
+    {
+      question: "Ólshenetuǵin xizmet (measured service) neni ańlatadi?",
+      answer: "Resurs tutınıwı esaplap barıladı"
+    },
+    {
+      question: "Bulıt sistemasında paydalanıwshı neni basqarmaydı?",
+      answer: "Fizikalıq server infrastrukturasın"
+    },
+    {
+      question: "Bulıtlı esaplaw ózgeshelikleri qaysi standartta belgilengen?",
+      answer: "NIST"
+    },
+    {
+      question: "Amazon Web Services (AWS) qashan iske túsirilgen?",
+      answer: "2006-jıl"
+    },
+    {
+      question: "Microsoft kompaniyasınıń tiykarǵı bulıtlı platforması qaysı?",
+      answer: "Microsoft Azure"
+    },
+    {
+      question: "Google kompaniyasınıń bulıtlı platforması qanday? ",
+      answer: "Google Cloud Platform (GCP)"
+    },
+    {
+      question: "Oracle kompaniyası tiykarınan qaysı bulıtlı xizmeti menen belgili? ",
+      answer: "Bulıtlı magliwmatlar bazası xizmetleri "
+    },
+    {
+      question: "Uztelecom kompaniyası qanday túrdegi bulıtlı xızmetlerdi kórsetedi?",
+      answer: "Milliy bulutlıq infrastruktura hám hosting xizmetleri"
+    },
+    {
+      question: "AWS EC2 xizmeti qaysi modelge tiyisli? ",
+      answer: "IaaS"
+    },
+    {
+      question: "Microsoft Azure bulutınıń tiykarǵı abzallıǵı nede?",
+      answer: "Microsoft ónimleri menen tolıq integraciyalaw"
+    },
+    {
+      question: "Google Cloud qaysı baǵdarda kúshli esaplanadı?",
+      answer: "Úlken magliwmatlar hám jasalma intellekt "
+    },
+    {
+      question: "Iri bulıtlı provayderler arasındaǵı tiykarǵı báseki nege tiykarlanǵan?",
+      answer: "Bahası, isenimlilik hám xizmetler"
+    },
+    {
+      question: "IaaS modeli neni usinis etedi?",
+      answer: "Virtual server hám infrastruktura"
+    },
+    {
+      question: "PaaS modeliniń tiykarǵı paydalanıwshıları kimler?",
+      answer: "Programmistler"
+    },
+    {
+      question: "SaaS modeli paydalanıwshıǵa neni beredi?",
+      answer: "Tayar isleytuǵin programmalıq támiynat"
+    },
+    {
+      question: "NaaS neni anlatadı?",
+      answer: "Xizmet sipatında tarmaq"
+    },
+    {
+      question: "IDaaS xizmeti nege xizmet etedi?",
+      answer: "Paydalanıwshını identifikaciyalaw hám autentifikaciyalaw"
+    },
+    {
+      question: "Dástúriy server menen bulıt texnologiyasınıń tiykarǵı parqı nede?",
+      answer: "Beyimlesiwsheńlik imkaniyatında"
+    },
+    {
+      question: "Bultli yesaplawdaǵı tiykarǵı qáwip qaysı?",
+      answer: "Maǵlıwmatlar qáwipsizligi mashqalaları"
+    },
+    {
+      question: "Qaysı modelde paydalanıwshı operacion sistemanı basqaradı? ",
+      answer: "IaaS"
+    },
+    {
+      question: "Bultli xızmet túrleri neshe tiykarǵı modelge bólinedi?",
+      answer: "3"
+    },
+    {
+      question: "SaaS (Software as a Service) modeli neni ańlatadi?",
+      answer: "Programmadan internet arqalı paydalanıw"
+    },
+    {
+      question: "SaaS modelinde paydalanıwshı neni basqarmaydı?",
+      answer: "Server hám infrastrukturanı"
+    },
+    {
+      question: "Tómendegilerden qaysı biri SaaS mısalı esaplanadı? ",
+      answer: "Google Docs"
+    },
+    {
+      question: "SaaS modeliniń tiykarǵı abzallıǵı nede?",
+      answer: "Programmanı ornatpayaq isletiw imkaniyatı"
+    },
+    {
+      question: "SaaS programmalarınan paydalanıw ushın ne zárúr?",
+      answer: "Internet hám brauzer"
+    },
+    {
+      question: "SaaS modeliniń kemshiliklerinen biri qaysı?",
+      answer: "Internetke baylanıslılıq"
+    },
+    {
+      question: "SaaS arxitekturasınıń tiykarǵı ózgesheligi nede?",
+      answer: "Kóp paydalanıwshılı."
+    },
+    {
+      question: "PaaS (Platforma xizmet sipatında) neni usınıs etedi?",
+      answer: "Programma jaratıw hám jaylastırıw ortalıǵı"
+    },
+    {
+      question: "Tómendegilerden qaysı biri PaaSqa mısal boladı?",
+      answer: "Google App Engine"
+    },
+    {
+      question: "PaaS modelinde paydalanıwshı neni basqaradı?",
+      answer: "Programma kodı hám sazlamaları"
+    },
+    {
+      question: "PaaStıń tiykarǵı abzallıǵı nede?",
+      answer: "Programma islep shıǵıwdı tezlestiriw"
+    },
+    {
+      question: "PaaS modelinde operacion sistemanı kim basqaradı?",
+      answer: "Xizmet kórsetiwshi provayder"
+    },
+    {
+      question: "Qaysi jaǵdayda PaaS modeli eń paydalı?",
+      answer: "Tez programma islep shıǵıwda"
+    },
+    {
+      question: "IaaS (Infrastructure as a Service) ne usınıs etedi?",
+      answer: "Virtual serverler, saqlaw hám tarmaq resursları"
+    },
+    {
+      question: "IaaS modelinde paydalanıwshı qaysı qatlamdı basqaradı?",
+      answer: "Operacion sistema hám qosimshalardı"
+    },
+    {
+      question: "Tómendegilerden qaysı biri IaaS xizmetine mısal boladı?",
+      answer: "Amazon EC2"
+    },
+    {
+      question: "IaaS modeliniń tiykarǵı abzallıǵı nede?",
+      answer: "Beyimlesiwsheń hám tolıq qadaǵalaw imkaniyatı"
+    },
+    {
+      question: "IaaS tıń kemshiliklerinen biri qaysı?",
+      answer: "Basqarıw quramalılıǵı"
+    },
+    {
+      question: "IaaSta virtual mashinalar qaysi texnologiya tiykarında isleydi?",
+      answer: "Virtualizaciya"
+    },
+    {
+      question: "NaaS (Network as a Service) neni ańlatadı?",
+      answer: "Tarmaq resursları xızmeti"
+    },
+    {
+      question: "NaaS tıń tiykarǵı wazıypası ne?",
+      answer: "Tarmaq infrastrukturasın basqarıw hám usınıw"
+    },
+    {
+      question: "NaaS xizmetine qaysı elementler kiredi?",
+      answer: "VPN, firewall"
+    },
+    {
+      question: "IDaaS (Identity as a Service) ne ushın qollanıladı? ",
+      answer: "Paydalanıwshını identifikaciyalaw"
+    },
+    {
+      question: "IDaaS xizmetiniń tiykarǵı funkciyası qaysı?",
+      answer: "Kirıwdi basqarıw"
+    },
+    {
+      question: "Tómendegilerden qaysı biri IDaaS mısalı? ",
+      answer: "Okta"
+    },
+    {
+      question: "NaaS hám IDaaS xizmetleri qaysı ortalıqta ayrıqsha áhmiyetli?",
+      answer: "Bulıtlı infrastrukturada"
+    },
+    {
+      question: "Public Cloud degende ne túsiniledi?",
+      answer: "Ashıq bulıt infrastrukturası"
+    },
+    {
+      question: "Public Cloud arxitekturasınıń tiykarǵı ózgesheligi qanday? ",
+      answer: "Multi-tenantlıq infrastruktura"
+    },
+    {
+      question: "Private Cloud modeli kóbinese qaysı jaǵdayda tanlanadı? ",
+      answer: "Joqarı qáwıpsizlik hám jekelik talap etilgende"
+    },
+    {
+      question: "Community Cloud nesi menen ajıralıp turadı? ",
+      answer: "Bir neshe shólkemler ushın uluwmalıǵı menen."
+    },
+    {
+      question: "Qaysi bulıt túri eń joqarı qadaǵalawdı támiyinleydi?",
+      answer: "Private Cloud"
+    },
+    {
+      question: "Mobil bulıtlı esaplaw arxitekturası neshe tiykarǵi bólimnen ibarat? ",
+      answer: "3"
+    },
+    {
+      question: "Mobil bulıtlı esaplawdıń tiykarǵı maqseti ne?",
+      answer: "Qurılma resursların únemlew"
+    },
+    {
+      question: "Mobil qosımshalardı bulıt penen integraciyalawdıń abzallıǵı nede?",
+      answer: "Masshtablaw"
+    },
+    {
+      question: "Mobil bulıtlı esaplawda tiykarǵı sheklew qaysı?",
+      answer: "Internet tezligi hám turaqlılıǵı"
+    },
+    {
+      question: "Mobil bulıtlı esaplawdı qollap-quwatlaytuǵın texnologiya qaysı?",
+      answer: "4G/5G tarmaqları"
+    },
+    {
+      question: "Grid esaplawdıń tiykarǵı maqseti?",
+      answer: "Úlken esaplaw máselelerin parallel orınlaw."
+    },
+    {
+      question: "Grid hám bulıttiń uqsaslıǵı nede?",
+      answer: "Resurslar bólistirilgeninde"
+    },
+    {
+      question: "Grid sistemasında resurslar kimge tiyisli boladı?",
+      answer: "Túrli shólkemlerge"
+    },
+    {
+      question: "Grid esaplawda basqarıw qanday boladı?",
+      answer: "Tarqatılǵan"
+    },
+    {
+      question: "Grid esaplaw kemshiligi?",
+      answer: "Basqarıw quramalıǵı"
+    },
+    {
+      question: "Grid esaplaw qaysı dáwirde keń tarqalgan?",
+      answer: "1990-2000-jıllar"
+    },
+    {
+      question: "Úlken maǵlıwmatlar (Big Data) neni ańlatadı?",
+      answer: "Júdá úlken kólemli maǵlıwmatlar"
+    },
+    {
+      question: "Bulıtlı MB ge tómendegilerden qaysı biri mısal bola aladı?",
+      answer: "Amazon RDS"
+    },
+    {
+      question: "Úlken maǵlıwmatlar qaysı texnologiya menen baylanıslı?",
+      answer: "Hadoop"
+    },
+    {
+      question: "Bulıt MB qaysı modelde kóp qollanıladı?",
+      answer: "PaaS/IaaS;"
+    },
+    {
+      question: "CRM sistemalar qay jerde isleydi?",
+      answer: "Bulıtta"
+    },
+    {
+      question: "Bulıt apparatları kóbinese qaysı modelde isleydi?",
+      answer: "Klaster"
+    },
+    {
+      question: "IoT qurılmalarına mısal?",
+      answer: "Hár túrli sensorlar."
+    },
+    {
+      question: "Bult ekosisteması degen ne?",
+      answer: "Provayder, klient, xizmetler"
+    },
+    {
+      question: "Ekosistemada paydalanıwshınıń roli?",
+      answer: "Xizmetten paydalanıw"
+    },
+    {
+      question: "SLA degen ne?",
+      answer: "Xizmet dárejesi boyınsha kelisim"
+    },
+    {
+      question: "SLA kimler ortasında dúziledi?",
+      answer: "Provayder hám klient"
+    },
+    {
+      question: "QoS neni ańlatadı?",
+      answer: "Quality of Service"
+    },
+    {
+      question: "QoS neni támiyinleydi?",
+      answer: "Xizmet sapası kepilligin"
+    },
+    {
+      question: "SLA qaysı qatlamda áhmiyetli?",
+      answer: "Barlıq xizmet qatlamlarında"
+    },
+    {
+      question: "SLA paydası?",
+      answer: "Isenimlilik"
+    },
+    {
+      question: "Load balancer degen ne?",
+      answer: "Júkti bólistirıwshi sistema"
+    },
+    {
+      question: "Multi-agent sistema degen ne?",
+      answer: "Bir neshe ǵárezsiz agentler sisteması"
+    },
+    {
+      question: "Multi-agent sisteması qay jerde qollanıladı?",
+      answer: "Resurslardı aqıllı basqarıwda"
+    },
+    {
+      question: "Virtualizaciya degen ne?",
+      answer: "Fizikalıq resurslardı virtual bóliw"
+    },
+    {
+      question: "Virtual mashina neni bildiredi?",
+      answer: "Virtual ortalıqtaǵı server"
+    },
+    {
+      question: "Vitual mashina (VM) resursları nelerden ibarat?",
+      answer: "CPU, RAM"
+    },
+    {
+      question: "Virtualizaciya qaysı model tiykarı yesaplanadı?",
+      answer: "IaaS"
+    },
+      {
+      question: "Qáwıpsizlik juwapkershiligi kimde boladı?",
+      answer: "Eki tárepte"
+    },
+  ]
+
+  function normalizeText(text) {
+    return text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+  }
+
+  function renderResults(data) {
+    resultsList.innerHTML = ''
+    data.forEach(qa => {
+      const li = document.createElement('li')
+      li.innerHTML = `<span>${qa.question}</span><br>${qa.answer}`
+      resultsList.appendChild(li)
+    })
+    resultsDiv.style.display = 'block'
+  }
+
+  // 🔹 MOBILDA – hamma savollar chiqadi
+  if (window.innerWidth <= 500) {
+    renderResults(questionsAndAnswers)
+  }
+
+  // 🔹 QIDIRUV
+  searchInput.addEventListener('input', () => {
+    const query = normalizeText(searchInput.value)
+
+    // mobil bo‘lsa – yashirmaymiz
+    if (window.innerWidth <= 500 && query.trim() === '') {
+      renderResults(questionsAndAnswers)
+      return
+    }
+
+    if (query.trim() === '') {
+      resultsDiv.style.display = 'none'
+      return
+    }
+
+    const filteredResults = questionsAndAnswers.filter(qa =>
+      normalizeText(qa.question).includes(query)
+    )
+
+    if (filteredResults.length > 0) {
+      renderResults(filteredResults)
+    } else {
+      resultsDiv.style.display = 'none'
+    }
+
+  })
+  
+  clearIcon.addEventListener('click', () => {
+    searchInput.value = ''
+    renderResults(questionsAndAnswers)
+  })
+</script>
+
+</body>
+
+</html>
